@@ -47,14 +47,6 @@ expansions
 
 ## Install
 
-### Bash
-
-```sh
-. /the/path/of/this/plugin/pinyin-completion.plugin.bash
-```
-
-### Zsh
-
 This plugin respects
 [zsh plugin standard](https://github.com/zdharma-continuum/Zsh-100-Commits-Club/blob/master/Zsh-Plugin-Standard.adoc),
 so if you use any plugin manager and follow the instructions of your plugin
