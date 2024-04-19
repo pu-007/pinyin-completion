@@ -43,7 +43,7 @@ expansions
 
 ## Dependencies
 
-- [pypinyin](https://github.com/mozillazg/python-pinyin)
+- [pypinyin](https://github.com/mozillazg/python-pinyin) `>= 0.51.0`
 
 ## Install
 

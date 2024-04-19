@@ -47,7 +47,9 @@ local -A _punctuation_map=(
 _pinyin_comp()
 {
   # unix file names can contain '\n', so use '\0' to separate them
-  local IFS=$'\0' suffix file result k v
+  local IFS=$'\0' suffix result file k v
+  local -i i=1
+  local -a files results
   if [ "$words[1]" = cd ] ; then
     suffix=/
   else
@@ -57,17 +59,26 @@ _pinyin_comp()
   for file in $(print -nN ${1:h}/*"$suffix"); do
     file="${file#./}"
     if [[ $file =~ [^[:ascii:]] ]]; then
-      result="$(pypinyin -fslug -sz -p= "$file")"
+      files+=($file)
+    else
+      result="$file"
+      if [[ $result == $1* ]]; then
+        reply+=(${(q)file})
+      fi
+    fi
+  done
+  if (( $#files )); then
+    results=(${(f)$(pypinyin -fslug -sz -p= $files)})
+    for result in $results; do
       for k v in ${(kv)FUZZY} ${(kv)_punctuation_map}; do
         result="${result//$k/$v}"
       done
-    else
-      result="$file"
-    fi
-    if [[ $result == $1* ]]; then
-      reply+=(${(q)file})
-    fi
-  done
+      if [[ $result == $1* ]]; then
+        reply+=(${(q)${files[i]}})
+      fi
+      i=$((i + 1))
+    done
+  fi
 }
 
 # pinyin-comp is performed as one part of user-expand
