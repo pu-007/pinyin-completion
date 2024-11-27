@@ -1,0 +1,62 @@
+# [:ascii:] need
+setopt rematchpcre
+local -A _punctuation_map=(
+  [～]=~
+  [！]=!
+  [＠]=@
+  [＃]='#'
+  [＄]=$
+  [％]=%
+  [＆]='&'
+  [＊]=*
+  [（]='('
+  [）]=')'
+  [＿]=_
+  [－]=-
+  [＋]=+
+  [［]='['
+  [］]=']'
+  [「]='['
+  [」]=']'
+  [【]='['
+  [】]=']'
+  [〔]='['
+  [〕]=']'
+  [＜]='<'
+  [＞]='>'
+  [《]='<'
+  [》]='>'
+  [«]='<'
+  [»]='>'
+  [‹]='<'
+  [›]='>'
+  [？]=?
+  [，]=,
+  [。]=.
+  [／]=/
+  [＼]=\\
+  [、]=\\
+  […]=...
+)
+
+# unix file names can contain '\n', so use '\0' to separate them
+local IFS=$'\0' suffix='' file result k v
+if [ "$words[1]" = cd ] ; then
+  suffix=/
+fi
+# print -N use '\0' to separate outputs
+for file in $(print -nN ${1:h}/*"$suffix"); do
+  file="${file#./}"
+  result="$file"
+  if [[ $result =~ [^[:ascii:]] ]]; then
+    for k v in ${(kv)FUZZY} ${(kv)_punctuation_map}; do
+      result="${result//$k/$v}"
+    done
+    result="$(pypinyin -fslug -sz -p= "$result")"
+  fi
+  if [[ $result == $1* ]]; then
+    reply+=(${(q)file})
+  fi
+done
+
+# ex: filetype=zsh
