@@ -39,8 +39,11 @@ local -A _punctuation_map=(
   […]=...
 )
 
+autoload -Uz pinyin-convert
+
 # unix file names can contain '\n', so use '\0' to separate them
 local IFS=$'\0' suffix='' file result k v
+local -a files
 if [ "$words[1]" = cd ] ; then
   suffix=/
 fi
@@ -52,11 +55,13 @@ for file in $(print -nN ${1:h}/*"$suffix"); do
     for k v in ${(kv)FUZZY} ${(kv)_punctuation_map}; do
       result="${result//$k/$v}"
     done
-    result="$(pypinyin -fslug -sz -p= "$result")"
+    pinyin-convert $result
+    result=$reply
   fi
   if [[ $result == $1* ]]; then
-    reply+=(${(q)file})
+    files+=(${(q)file})
   fi
 done
+reply=($files)
 
 # ex: filetype=zsh
