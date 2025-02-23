@@ -1,3 +1,3 @@
-reply=$(pypinyin -fslug -sz -p= "$1")
+reply=$(pinyin -s=z "$1" | tr -d ' ')
 
 # ex: filetype=zsh
